@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+
+  api:
+    image: acme.localhost/api
+    build: ./api
+    develop:
+      watch:
+        - action: sync
+          path: ./api/src/hello.http
+          target: /app/hello.http
+    ports:
+      - 8080:8080
+    depends_on:
+      migrator:
+        condition: service_completed_successfully
+  
+  migrator:
+    image: acme.localhost/api
+    build: ./api
+    pull_policy: never
+    command: /app/migrator.sh
